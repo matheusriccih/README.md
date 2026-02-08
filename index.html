@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MATHEUS RICCI – Planilha Online</title>
   <style>
     :root {
@@ -129,6 +130,72 @@
       border: none;
       cursor: pointer;
     }
+    /* ===== RESPONSIVO (CELULAR / TABLET) ===== */
+@media (max-width: 768px) {
+
+  header {
+    font-size: 18px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .container {
+    margin: 16px auto;
+    padding: 0 12px;
+  }
+
+  .card {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  h2 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .saldo-box {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .saldo-box input {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  .saldo-atual {
+    text-align: center;
+    font-size: 20px;
+  }
+
+  table {
+    font-size: 13px;
+  }
+
+  th, td {
+    padding: 8px 6px;
+  }
+
+  input, select {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  button {
+    width: 100%;
+    font-size: 15px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .remove {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+  }
+}
   </style>
 </head>
 <body>
@@ -244,3 +311,4 @@
 
 </body>
 </html>
+
