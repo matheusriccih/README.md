@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>MATHEUS RICCI – Planilha Online</title>
+  <style>
+    :root {
+      --bg: #e5e7eb;
+      --card: #ffffff;
+      --border: #d1d5db;
+      --text: #111827;
+      --primary: #2563eb;
+      --success: #000000;
+      --danger: #dc2626;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    header {
+      background: #f9fafb;
+      padding: 22px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 800;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 12px 28px rgba(0,0,0,.08);
+      border: 1px solid var(--border);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .saldo-box {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .saldo-box input {
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-weight: 700;
+      width: 200px;
+      text-align: center;
+    }
+
+    .saldo-atual {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--success);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    th {
+      background: #f3f4f6;
+      padding: 14px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+    }
+
+    input, select {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-weight: 700;
+      width: 100%;
+      text-align: center;
+    }
+
+    button {
+      margin-top: 26px;
+      padding: 16px 30px;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(90deg, #2563eb, #22c55e);
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .remove {
+      background: var(--danger);
+      padding: 8px 14px;
+      border-radius: 10px;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<header>MATHEUS RICCI – PLANILHA ONLINE</header>
+
+<div class="container">
+  <div class="card">
+    <h2>Controle Financeiro</h2>
+
+    <div class="saldo-box">
+      <label>Saldo disponível:</label>
+      <input type="number" id="saldoInicial" placeholder="0.00" />
+      <div>Saldo atual: <span class="saldo-atual" id="saldoAtual">R$ 0.00</span></div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Categoria</th>
+          <th>Valor (R$)</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody id="lista"></tbody>
+      <tfoot>
+        <tr>
+          <td><input type="date" id="data" /></td>
+          <td>
+            <select id="categoria">
+              <option>Ifood</option>
+              <option>Combustível</option>
+              <option>Gasto pessoal</option>
+              <option>Presentes</option>
+            </select>
+          </td>
+          <td><input type="number" id="valor" placeholder="0.00" /></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <button onclick="adicionar()">Adicionar gasto</button>
+  </div>
+</div>
+
+<script>
+  let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+  const saldoInput = document.getElementById('saldoInicial');
+
+  // carregar saldo salvo
+  if (localStorage.getItem('saldoInicial')) {
+    saldoInput.value = localStorage.getItem('saldoInicial');
+  }
+
+  function salvarDados() {
+    localStorage.setItem('gastos', JSON.stringify(gastos));
+    localStorage.setItem('saldoInicial', saldoInput.value);
+  }
+
+  function atualizarSaldo() {
+    const saldoInicial = Number(saldoInput.value) || 0;
+    const totalGastos = gastos.reduce((s, g) => s + g.valor, 0);
+    const saldo = saldoInicial - totalGastos;
+
+    const saldoEl = document.getElementById('saldoAtual');
+    saldoEl.innerText = 'R$ ' + saldo.toFixed(2);
+
+    saldoEl.style.transform = 'scale(1.08)';
+    setTimeout(() => saldoEl.style.transform = 'scale(1)', 150);
+
+    salvarDados();
+  }
+
+  function adicionar() {
+    const data = document.getElementById('data').value;
+    const categoria = document.getElementById('categoria').value;
+    const valor = Number(document.getElementById('valor').value);
+
+    if (!data || !valor) return alert('Preencha data e valor');
+
+    gastos.push({ data, categoria, valor });
+    document.getElementById('valor').value = '';
+    render();
+  }
+
+  function remover(i) {
+    gastos.splice(i, 1);
+    render();
+  }
+
+  function render() {
+    const lista = document.getElementById('lista');
+    lista.innerHTML = '';
+
+    gastos.forEach((g, i) => {
+      lista.innerHTML += `
+        <tr>
+          <td>${g.data}</td>
+          <td>${g.categoria}</td>
+          <td>R$ ${g.valor.toFixed(2)}</td>
+          <td><button class="remove" onclick="remover(${i})">X</button></td>
+        </tr>`;
+    });
+
+    atualizarSaldo();
+  }
+
+  saldoInput.addEventListener('input', atualizarSaldo);
+  render();
+</script>
+
+</body>
+</html>
